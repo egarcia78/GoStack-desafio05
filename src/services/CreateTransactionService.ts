@@ -17,6 +17,19 @@ class CreateTransactionService {
   public execute({ title, value, type }: Request): Transaction {
     const { total } = this.transactionsRepository.getBalance();
 
+    if (!title || !value || !type) {
+      throw new Error('Parameter(s) is missing');
+    }
+
+    // if (!['income', 'outcome'].includes(type))
+    if (type !== 'income' && type !== 'outcome') {
+      throw new Error('Invalid transaction type');
+    }
+
+    if (value <= 0) {
+      throw new Error('Invalid value amount');
+    }
+
     if (type === 'outcome' && total < value) {
       throw new Error('You do not have enought balance');
     }
